@@ -8,5 +8,25 @@
 </head>
 <body>
     <h1>Currency Exchange Strategy</h1>
+    <div id="input">
+        <h2>Input Data</h2>
+        <label for="amount">Amount to Exchange:</label>
+        <input type="number" id="amount" value="100.00"><br>
+        <label for="from">From:</label>
+        <input id="from" value="RUB"><br>
+        <label for="to">To:</label>
+        <input id="to" value="USD"><br>
+
+        <h3>Exchange Rates</h3>
+        <div id="rates"></div>
+
+        <br>
+        <button onclick="calculate()">Calculate</button>
+    </div>
+    <div id="output">
+        <h2>Output Data</h2>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
