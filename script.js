@@ -12,7 +12,7 @@ const INITIAL_RATES = [
         fee: 0.02,
     }
 ]
-const CURS2RATE = Object.assign({}, ...INITIAL_RATES.map((v) => {
+var CURS2RATE = Object.assign({}, ...INITIAL_RATES.map((v) => {
     return { [`${v['from']}-${v['to']}`]: { rate: v['rate'], fee: v['fee'] } };
 }));
 
@@ -21,8 +21,8 @@ function insertRate(rate) {
     var rates = document.getElementById("rates");
     var row = document.createElement("div")
     row.innerHTML = `<label>${rate['from']} -> ${rate['to']}:</label>
-    <input type="number" id="rate-${rate['rom']}-${rate['to']}" value="${rate['rate']}"> +
-    <input type="number" id="fee-${rate['rom']}-${rate['to']}" placeholder="Fee %" value="${rate['fee'] * 100}">%<br>`
+    <input onchange="rateChange(this)" type="number" id="rate-${rate['from']}-${rate['to']}" value="${rate['rate']}"> +
+    <input onchange="feeChange(this)" type="number" id="fee-${rate['from']}-${rate['to']}" placeholder="Fee %" value="${rate['fee'] * 100}">%<br>`
     rates.appendChild(row);
 }
 
@@ -40,6 +40,22 @@ function calculateChainResult(curs2rate, chain, amount) {
         res = res * rate.rate * (1 - rate.fee);
     }
     return Math.round(res * 100) / 100;
+}
+
+function rateChange(node) {
+    const curs = node.id.slice(5);
+    if (!(curs in CURS2RATE)) {
+        return;
+    }
+    CURS2RATE[curs].rate = node.value;
+}
+
+function feeChange(node) {
+    const curs = node.id.slice(4);
+    if (!(curs in CURS2RATE)) {
+        return;
+    }
+    CURS2RATE[curs].fee = node.value / 100;
 }
 
 function calculate() {
