@@ -148,6 +148,23 @@ function prepareChains(from, to, currencies, limit) {
     return chains.slice(0, limit);
 }
 
+function setResult(node, res, to) {
+    if (res !== null) {
+        node.innerHTML = `${res} ${to}`;
+        node.style = "color:green";
+    } else {
+        node.innerHTML = "Not enough data (probably unknown currencies";
+        node.style = "color:red";
+    }
+}
+
+function handleDrag(e) {
+    chain = Array.from(e.to.getElementsByClassName("chain-item")).map(v => v.textContent);
+    const amount = parseFloat(document.getElementById("amount").value);
+    res = calculateChainResult(CURS2RATE, chain, amount);
+    setResult(e.to.parentElement.getElementsByClassName("chain-result")[0], res, chain.at(-1));
+}
+
 function calculate() {
     const from = document.getElementById("from").value;
     const to = document.getElementById("to").value;
@@ -167,8 +184,8 @@ function calculate() {
         var chainItems = document.createElement("div");
         chainItems.className = "chain-items";
         chain.forEach(cur => {
-            var curSpan = document.createElement("span");
-            curSpan.innerHTML = `<div>${cur}</div> `;
+            var curSpan = document.createElement("div");
+            curSpan.innerHTML = cur;
             curSpan.className = "chain-item";
             chainItems.appendChild(curSpan);
         });
@@ -185,5 +202,9 @@ function calculate() {
         chainNode.appendChild(chainItems);
         chainNode.appendChild(node);
         output.appendChild(chainNode);
+        new Sortable(chainItems, {
+            animation: 150,
+            onEnd: (e) => handleDrag(e)
+        });
     })
 }
