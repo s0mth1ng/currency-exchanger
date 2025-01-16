@@ -19,7 +19,8 @@
             align-self: center;
         }
 
-        .chain-items {
+        .chain-items,
+        .pool {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -32,19 +33,41 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             cursor: grab;
+            height: fit-content;
         }
 
         .chain-result {
             font-weight: bold;
             align-self: center;
         }
+
+        .play {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .pool {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+        }
+
+        #curPool {
+            width: 20%;
+        }
+
+        #customChain {
+            width: 80%;
+        }
     </style>
 </head>
 
 <body>
     <h1>Currency Exchange Strategy</h1>
+    <h2>Input Data</h2>
     <div id="input">
-        <h2>Input Data</h2>
         <label for="amount">Amount to Exchange:</label>
         <input type="number" id="amount" value="100.00"><br>
         <label for="from">From:</label>
@@ -56,9 +79,15 @@
         <div id="rates"></div>
 
         <br>
-        <button onclick="calculate()">Calculate</button>
+        <h3>Custom chain</h3>
+        <div class="play">
+            <div id='customChain' class="pool"></div>
+            <div id='curPool' class='pool'></div>
+        </div>
+        <div id="playResult"></div>
     </div>
-    <h2>Output Data</h2>
+    <h2>Best chains</h2>
+    <button onclick="calculate()">Calculate</button>
     <div id="output">
     </div>
 

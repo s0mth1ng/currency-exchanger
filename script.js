@@ -64,6 +64,24 @@ var CURS2RATE = Object.assign({}, ...INITIAL_RATES.map((v) => {
     return { [`${v['from']}-${v['to']}`]: { rate: v['rate'], fee: v['fee'] } };
 }));
 const CURRENCIES = [... new Set(INITIAL_RATES.flatMap(v => [v.from, v.to]))];
+const pool = document.getElementById('curPool');
+const customChain = document.getElementById('customChain');
+CURRENCIES.forEach(c => {
+    var cur = document.createElement("div");
+    cur.innerHTML = c;
+    cur.className = "chain-item";
+    pool.appendChild(cur);
+});
+new Sortable(pool, {
+    animation: 150,
+    group: "shared",
+    onEnd: calculateCustomChain
+});
+new Sortable(document.getElementById('customChain'), {
+    group: 'shared',
+    animation: 150,
+    onEnd: calculateCustomChain
+});
 
 function insertRate(rate) {
     var rates = document.getElementById("rates");
@@ -77,17 +95,17 @@ function insertRate(rate) {
 INITIAL_RATES.forEach(insertRate)
 
 function calculateChainResult(curs2rate, chain, amount) {
-    var res = amount;
+    var res = [amount];
     for (let i = 1; i < chain.length; i++) {
         curs = `${chain[i - 1]}-${chain[i]}`;
         if (!(curs in curs2rate)) {
             console.log(`${curs} not in curs2rate`);
-            return null;
+            return res;
         }
         rate = curs2rate[curs];
-        res = res * rate.rate * (1 - rate.fee);
+        res.push(Math.round(res.at(-1) * rate.rate * (1 - rate.fee) * 100) / 100);
     }
-    return Math.round(res * 100) / 100;
+    return res;
 }
 
 function rateChange(node) {
@@ -161,7 +179,7 @@ function setResult(node, res, to) {
 function handleDrag(e) {
     chain = Array.from(e.to.getElementsByClassName("chain-item")).map(v => v.textContent);
     const amount = parseFloat(document.getElementById("amount").value);
-    res = calculateChainResult(CURS2RATE, chain, amount);
+    res = calculateChainResult(CURS2RATE, chain, amount).at(-1);
     setResult(e.to.parentElement.getElementsByClassName("chain-result")[0], res, chain.at(-1));
 }
 
@@ -173,7 +191,7 @@ function calculate() {
     output = document.getElementById("output");
     output.innerHTML = "";
     const chains = prepareChains(from, to, CURRENCIES, 10);
-    const chain2result = chains.map(chain => [chain, calculateChainResult(CURS2RATE, chain, amount)])
+    const chain2result = chains.map(chain => [chain, calculateChainResult(CURS2RATE, chain, amount).at(-1)])
     chain2result.sort((a, b) => b[1] - a[1]);
     console.log(chain2result);
     chain2result.forEach(v => {
@@ -207,4 +225,23 @@ function calculate() {
             onEnd: (e) => handleDrag(e)
         });
     })
+}
+
+function calculateCustomChain() {
+    const customChain = document.getElementById('customChain');
+    chain = Array.from(customChain.getElementsByClassName("chain-item")).map(v => v.textContent);
+    const amount = parseFloat(document.getElementById("amount").value);
+    res = calculateChainResult(CURS2RATE, chain, amount);
+    node = document.getElementById("playResult");
+    node.innerHTML = "";
+    for (let i = 1; i < chain.length; i++) {
+        step = document.createElement("div");
+        node.appendChild(step);
+        if (i < res.length) {
+            step.innerHTML = `${chain[i - 1]} -> ${chain[i]}: ${res[i]} ${chain[i]}`;
+        } else {
+            step.innerHTML = "Not enough data (probably unknown currencies";
+            break
+        }
+    }
 }
