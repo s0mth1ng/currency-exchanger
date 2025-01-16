@@ -183,7 +183,7 @@ function handleDrag(e) {
     if (res.length != chain.length) {
         res = null;
     }
-    setResult(e.to.parentElement.getElementsByClassName("chain-result")[0], res, chain.at(-1));
+    setResult(e.to.parentElement.getElementsByClassName("chain-result")[0], res.at(-1), chain.at(-1));
 }
 
 function calculate() {
