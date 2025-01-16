@@ -63,7 +63,7 @@ const INITIAL_RATES = [
 var CURS2RATE = Object.assign({}, ...INITIAL_RATES.map((v) => {
     return { [`${v['from']}-${v['to']}`]: { rate: v['rate'], fee: v['fee'] } };
 }));
-const CURRENCIES = [... new Set(INITIAL_RATES.flatMap(v => [v.from, v.to]))];
+var CURRENCIES = [... new Set(INITIAL_RATES.flatMap(v => [v.from, v.to]))];
 const pool = document.getElementById('curPool');
 const customChain = document.getElementById('customChain');
 CURRENCIES.forEach(c => {
@@ -179,7 +179,10 @@ function setResult(node, res, to) {
 function handleDrag(e) {
     chain = Array.from(e.to.getElementsByClassName("chain-item")).map(v => v.textContent);
     const amount = parseFloat(document.getElementById("amount").value);
-    res = calculateChainResult(CURS2RATE, chain, amount).at(-1);
+    res = calculateChainResult(CURS2RATE, chain, amount);
+    if (res.length != chain.length) {
+        res = null;
+    }
     setResult(e.to.parentElement.getElementsByClassName("chain-result")[0], res, chain.at(-1));
 }
 
@@ -191,9 +194,14 @@ function calculate() {
     output = document.getElementById("output");
     output.innerHTML = "";
     const chains = prepareChains(from, to, CURRENCIES, 10);
-    const chain2result = chains.map(chain => [chain, calculateChainResult(CURS2RATE, chain, amount).at(-1)])
+    const chain2result = chains.map(chain => {
+        res = calculateChainResult(CURS2RATE, chain, amount);
+        if (res.length != chain.length) {
+            return [chain, null];
+        }
+        return [chain, res.at(-1)];
+    });
     chain2result.sort((a, b) => b[1] - a[1]);
-    console.log(chain2result);
     chain2result.forEach(v => {
         const chain = v[0];
         const res = v[1];
@@ -244,4 +252,30 @@ function calculateCustomChain() {
             break
         }
     }
+}
+
+function appendRate() {
+    let from = prompt('From');
+    let to = prompt('To');
+    if (!from || !to) {
+        alert("Invalid currencies");
+        return;
+    }
+    const k = `${from}-${to}`;
+    if (k in CURS2RATE) {
+        alert("Already added");
+        return;
+    }
+    CURS2RATE[k] = { rate: 1, fee: 0 };
+    const rate = { from: from, to: to, rate: 1, free: 0 };
+    insertRate(rate);
+    INITIAL_RATES.push(rate);
+    CURRENCIES = [... new Set(INITIAL_RATES.flatMap(v => [v.from, v.to]))];
+    pool.innerHTML = "";
+    CURRENCIES.forEach(c => {
+        var cur = document.createElement("div");
+        cur.innerHTML = c;
+        cur.className = "chain-item";
+        pool.appendChild(cur);
+    });
 }
