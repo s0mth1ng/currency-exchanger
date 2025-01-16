@@ -96,5 +96,9 @@ function calculate() {
         node.setAttribute("id", resId);
         document.getElementById("output").appendChild(node);
     }
-    node.innerHTML = `<span>${res}</span> <span>${to}</span>`
+    if (res !== null) {
+        node.innerHTML = `<span>${res}</span> <span>${to}</span>`;
+    } else {
+        node.innerHTML = `Not enough data (probably unknown currencies ${from} / ${to})`;
+    }
 }
