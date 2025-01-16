@@ -41,7 +41,6 @@ var CURS2RATE = Object.assign({}, ...INITIAL_RATES.map((v) => {
 }));
 
 function insertRate(rate) {
-    console.log(rate);
     var rates = document.getElementById("rates");
     var row = document.createElement("div")
     row.innerHTML = `<label>${rate['from']} -> ${rate['to']}:</label>
