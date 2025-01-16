@@ -10,7 +10,31 @@ const INITIAL_RATES = [
         to: "RUB",
         rate: 102.49,
         fee: 0.02,
-    }
+    },
+    {
+        from: "RUB",
+        to: "EUR",
+        rate: 0.0095,
+        fee: 0.02,
+    },
+    {
+        from: "EUR",
+        to: "RUB",
+        rate: 105.52,
+        fee: 0.025,
+    },
+    {
+        from: "USD",
+        to: "EUR",
+        rate: 0.97,
+        fee: 0.0,
+    },
+    {
+        from: "EUR",
+        to: "USD",
+        rate: 1.03,
+        fee: 0.0,
+    },
 ]
 var CURS2RATE = Object.assign({}, ...INITIAL_RATES.map((v) => {
     return { [`${v['from']}-${v['to']}`]: { rate: v['rate'], fee: v['fee'] } };
