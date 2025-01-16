@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exchanger</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .chain {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-self: center;
+        }
+
+        .chain-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .chain-item {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: grab;
+        }
+
+        .chain-result {
+            font-weight: bold;
+            align-self: center;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Currency Exchange Strategy</h1>
     <div id="input">
@@ -30,4 +64,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
